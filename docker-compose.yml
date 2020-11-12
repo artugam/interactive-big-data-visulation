@@ -1,0 +1,55 @@
+version: "2.2"
+services:
+  magistry-postgresql:
+    container_name: magistry-postgresql
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_DB: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./sql:/var/lib/postgress
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - magistry-backend
+  magistry-adminer:
+    container_name: magistry-adminer
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - magistry-backend
+  magistry-backend:
+    container_name: magistry-backend
+    build:
+      context: ./backend
+    restart: on-failure
+    entrypoint: npm run start:dev
+    ports:
+      - "8090:8080"
+    volumes:
+      - ./backend:/app:delegated
+    networks:
+      - magistry-backend
+      - magistry-frontend
+  magistry-frontend:
+    container_name: magistry-frontend
+    build:
+      context: ./frontend
+    restart: on-failure
+    entrypoint: npm run start
+    ports:
+      - "8091:3000"
+    volumes:
+      - ./frontend:/app:delegated
+    networks:
+      - magistry-frontend
+networks:
+  magistry-backend:
+    driver: bridge
+  magistry-frontend:
+    driver: bridge
