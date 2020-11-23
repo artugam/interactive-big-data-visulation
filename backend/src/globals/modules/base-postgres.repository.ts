@@ -26,6 +26,7 @@ export default class BasePostgresRepository {
       if(!this.client['_connected']) {
         await this.client.connect();
       }
+      console.log({query: queryTextOrConfig, values});
       return this.client.query(queryTextOrConfig, values);
     } catch (e) {
       console.log('Postgres Error');

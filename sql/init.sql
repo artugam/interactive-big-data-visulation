@@ -8,4 +8,5 @@ CREATE TABLE IF NOT EXISTS checkins (
     cnt_log double precision
 );
 
-COPY checkins FROM '/var/lib/postgress/checkins-little.csv' WITH DELIMITER E'\t' CSV HEADER;
+--COPY checkins FROM '/var/lib/postgress/checkins-little.csv' WITH DELIMITER E'\t' CSV HEADER;
+COPY checkins FROM '/var/lib/postgress/checkins-postgresql-dump.csv' WITH DELIMITER E'\t' CSV HEADER;

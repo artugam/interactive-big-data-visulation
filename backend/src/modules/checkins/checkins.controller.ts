@@ -1,5 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import CheckinsService from "./checkins.service";
+import {CheckinsRequestParams} from "./types";
 
 export default class CheckinsController {
 
@@ -8,7 +9,8 @@ export default class CheckinsController {
 
   async chart(req: Request, res: Response, next: NextFunction) {
     try {
-      const data = await this.checkinsService.chartData();
+      const params = req.query as unknown as CheckinsRequestParams;
+      const data = await this.checkinsService.chartData(params);
       return res.status(200).json(data);
     } catch (e) {
       console.log(e);
