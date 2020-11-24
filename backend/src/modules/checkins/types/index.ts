@@ -1,4 +1,3 @@
-
 export interface CheckinsRow {
   space_layer: number;
   time_layer: number;
@@ -10,20 +9,59 @@ export interface CheckinsRow {
 }
 
 export interface MinMax {
-  zMin: number;
-  zMax: number;
+  min: number;
+  max: number;
 }
 
 export interface ChartTrace {
   x: number[],
   y: number[],
   z: number[]
+
 }
 
-export interface CheckinsRequestParams extends CheckinsFilters {};
+export interface CheckinsChartData {
+  data: ChartTrace[],
+  range: number[]
+}
+
+export interface CheckinsRequestParams extends CheckinsFilters {}
+
+export enum ChartType {
+  BOXES = 'boxes',
+  TILES = 'tiles',
+}
 
 export interface CheckinsFilters {
   spaceLayer?: number;
   timeLayer?: number;
   time?: number;
+  type?: ChartType;
+}
+
+export interface CheckinsChartSettingsDb {
+  time_max: number;
+  time_min: number;
+}
+
+export interface CheckinsChartGlobalSettingsDb {
+  space_layer_max: number;
+  space_layer_min: number;
+  time_layer_max: number;
+  time_layer_min: number;
+}
+
+export interface CheckinsChartGlobalSettings {
+  spaceLayer: MinMax;
+  timeLayer: MinMax;
+}
+
+export interface CheckinsChartSettings {
+  time: MinMax;
+  range?: number[]
+}
+
+export interface ChartDataResponse {
+  data: ChartTrace[];
+  settings: CheckinsChartSettings;
 }

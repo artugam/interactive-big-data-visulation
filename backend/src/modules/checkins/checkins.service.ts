@@ -1,5 +1,16 @@
 import CheckinsRepository from "./checkins.repository";
-import {ChartTrace, CheckinsFilters, MinMax} from "./types";
+import {
+  CheckinsChartData,
+  ChartTrace, ChartType, CheckinsChartGlobalSettings, CheckinsChartGlobalSettingsDb,
+  CheckinsChartSettings,
+  CheckinsChartSettingsDb,
+  CheckinsFilters,
+  CheckinsRequestParams
+} from "./types";
+import ChartBoxesService from "./chart-services/chart.boxes.service";
+import ChartTilesService from "./chart-services/chart.tiles.service";
+import {response} from "express";
+import {settings} from "cluster";
 
 
 export default class CheckinsService {
@@ -13,86 +24,67 @@ export default class CheckinsService {
 
   /**
    *
+   * @param {CheckinsRequestParams} params
+   * @returns {Promise<[ChartTrace[], CheckinsChartSettings]>}
+   */
+  async chartData(params: CheckinsRequestParams): Promise<[ChartTrace[], CheckinsChartSettings]> {
+    return Promise.all([
+      this.checkinsData(params),
+      this.availableChartSettings(params)
+    ]).then(response => {
+      const [checkinsData, settings] = response;
+      settings.range = checkinsData.range;
+      return [
+        checkinsData.data,
+        settings
+      ]
+    });
+  }
+
+  async availableChartSettings(params: CheckinsRequestParams): Promise<CheckinsChartSettings> {
+    return this.checkinsRepository.findSettings(params)
+      .then((settingsDb: CheckinsChartSettingsDb) => {
+        const {time_min, time_max} = settingsDb;
+        return {
+          time: {
+            max: time_max,
+            min: time_min
+          }
+        };
+      });
+  }
+
+  async availableChartGlobalSettings (): Promise<CheckinsChartGlobalSettings>  {
+    return this.checkinsRepository.findGlobalSettings()
+      .then((settingsDb: CheckinsChartGlobalSettingsDb) => {
+        const {space_layer_min, space_layer_max, time_layer_max, time_layer_min} = settingsDb;
+        return {
+          spaceLayer: {
+            min: space_layer_min,
+            max: space_layer_max
+          },
+          timeLayer: {
+            max: time_layer_max,
+            min: time_layer_min
+          }
+        };
+      });
+  }
+
+  /**
+   *
    * @param {CheckinsFilters} params
    * @returns {Promise<ChartTrace[]>}
    */
-  async chartData(params: CheckinsFilters): Promise<ChartTrace[]> {
+  async checkinsData(params: CheckinsFilters): Promise<CheckinsChartData> {
     const data = await this.checkinsRepository.findChartData(params);
-    const outData = [];
-    const map = new Map<string, MinMax>();
 
-    for (const {tile_x, tile_y, cnt} of data) {
-      const value = Number(cnt);
-      const key = tile_x + ";" + tile_y;
-      const current = map.get(key);
-      if (!current) {
-        map.set(key, {
-          zMax: value,
-          zMin: 0
-        });
-        continue;
-      }
-      if(current.zMin > value) {
-        current.zMin = value;
-      }
-      if(current.zMax < value) {
-        current.zMax = value;
-      }
+    switch (params.type) {
+      case ChartType.TILES:
+        return new ChartTilesService().build(data);
     }
 
-    for (const key of map.keys()) {
-      const [x, y] = key.split(';')
-      const {zMin, zMax} = map.get(key) as MinMax;
-      const minPoint = {
-        x: Number(x),
-        y: Number(y),
-        z: zMin
-      }
-
-      const maxPoint = {
-        x: Number(x),
-        y: Number(y),
-        z: zMax
-      }
-      const spaceLayer = 7;
-      const size = Math.pow(spaceLayer ,2);
-      // const minPointSize = size / 2;
-      const minPointSize = 0.5;
-      // const minPointSize = size;
-
-      const
-        point1 = { x: minPoint.x - minPointSize, y: minPoint.y - minPointSize, z: minPoint.z},
-        point2 = { x: minPoint.x - minPointSize, y: minPoint.y + minPointSize, z: minPoint.z},
-        point3 = { x: minPoint.x + minPointSize, y: minPoint.y + minPointSize, z: minPoint.z},
-        point4 = { x: minPoint.x + minPointSize, y: minPoint.y - minPointSize, z: minPoint.z},
-
-        point11 = { x: minPoint.x - minPointSize, y: minPoint.y - minPointSize, z: maxPoint.z},
-        point21 = { x: minPoint.x - minPointSize, y: minPoint.y + minPointSize, z: maxPoint.z},
-        point31 = { x: minPoint.x + minPointSize, y: minPoint.y + minPointSize, z: maxPoint.z},
-        point41 = { x: minPoint.x + minPointSize, y: minPoint.y - minPointSize, z: maxPoint.z};
-      const points = [
-        point1,
-        point2,
-        point3,
-        point4,
-        point11,
-        point21,
-        point31,
-        point41,
-      ];
-
-      const parsedx = points.map(item => item.x);
-      const parsedy = points.map(item => item.y);
-      const parsedz = points.map(item => item.z);
-
-
-      outData.push({
-        x: parsedx,
-        y: parsedy,
-        z: parsedz
-      });
-    }
-
-    return outData;
+    return new ChartBoxesService().build(data);
   }
+
 }

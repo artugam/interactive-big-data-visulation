@@ -1,11 +1,39 @@
 export interface CheckinsChart {
-  x: number[],
-  y: number[],
-  z: number[]
+  data: {
+    x: number[],
+    y: number[],
+    z: number[]
+  }[],
+  settings: {
+    time: {
+      max: number,
+      min: number
+    },
+    range: number[]
+  }
+}
+
+export interface CheckinsChartGlobalSettings {
+  settings: {
+    spaceLayer: {
+      max: number,
+      min: number
+    },
+    timeLayer: {
+      max: number,
+      min: number
+    }
+  }
+}
+
+export enum ChartType {
+  BOXES = 'boxes',
+  TILES = 'tiles',
 }
 
 export interface CheckinsFilters {
   spaceLayer?: number;
   timeLayer?: number;
   time?: number;
+  type: ChartType;
 }
