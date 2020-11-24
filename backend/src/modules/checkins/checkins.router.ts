@@ -11,4 +11,9 @@ checkinsRouter.get(
   (req: Request, res: Response, next: NextFunction) => checkinsController.chart(req, res, next)
 );
 
+checkinsRouter.get(
+  '/chart/global-settings',
+  (req: Request, res: Response, next: NextFunction) => checkinsController.chartGlobalSettings(req, res, next)
+);
+
 export default checkinsRouter;

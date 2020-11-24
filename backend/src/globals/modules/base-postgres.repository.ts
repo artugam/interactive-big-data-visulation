@@ -1,5 +1,6 @@
 import {QueryConfig, QueryResult, QueryResultRow} from "pg";
 import PostgresClient from "./postgres.client";
+import {response} from "express";
 
 export default class BasePostgresRepository {
   protected client: PostgresClient;
@@ -22,12 +23,12 @@ export default class BasePostgresRepository {
     values?: I,
   ): Promise<QueryResult<R> | undefined> {
     try {
-      // @ts-ignore
-      if(!this.client['_connected']) {
-        await this.client.connect();
-      }
-      console.log({query: queryTextOrConfig, values});
-      return this.client.query(queryTextOrConfig, values);
+      const connection = await this.client.connect();
+      const response = await connection.query(queryTextOrConfig, values);
+      await connection.release();
+
+      console.log({query: queryTextOrConfig, values: values ?? null})
+      return response;
     } catch (e) {
       console.log('Postgres Error');
       console.log(e);

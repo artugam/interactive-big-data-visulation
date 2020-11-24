@@ -4,32 +4,67 @@ import {loadSettings} from "../../config";
 
 // @ts-ignore
 import * as Plotly from 'plotly.js/dist/plotly';
-import {Layout, PlotData} from 'plotly.js';
-import {CheckinsChart, CheckinsFilters} from "./types";
+import {Layout} from 'plotly.js';
+import {ChartType, CheckinsChart, CheckinsChartGlobalSettings, CheckinsFilters} from "./types";
 
 
 
+const DEFAULT_SPACE_LAYER = 2;
+const DEFAULT_TIME_LAYER = 4;
+const DEFAULT_TYPE = ChartType.BOXES;
+// const DEFAULT_TYPE = ChartType.TILES;
 
-const DEFAULT_SPACE_LAYER = 4;
-const DEFAULT_TIME_LAYER = 6;
 
 export class Checkins extends React.Component {
 
-  data: CheckinsChart[] = [];
+  checkinsOutput: CheckinsChart = {
+    data: [],
+    settings: {
+      time:{
+        min: 0,
+        max: 20
+      },
+      range: []
+    }
+  };
 
   state: CheckinsFilters = {
+
     spaceLayer: DEFAULT_SPACE_LAYER,
-    timeLayer: DEFAULT_TIME_LAYER
+    timeLayer: DEFAULT_TIME_LAYER,
+    type: DEFAULT_TYPE,
+    time: 5
   }
 
 
   async componentDidMount() {
-    await this.loadData(this.state);
+    await Promise.all([
+      this.loadData(this.state),
+      this.loadGlobalSettings()
+    ])
+  }
+
+  async loadGlobalSettings() {
+    const settings = await loadSettings();
+    const output = await axios.get(settings.apiUrl + '/checkins/chart/global-settings')
+      .then(data => {
+        console.log(data);
+        return data.data;
+      }) as CheckinsChartGlobalSettings;
+    console.log(output);
   }
 
   async loadData(params: CheckinsFilters) {
+
     const settings = await loadSettings();
-    this.data = await axios.get(settings.apiUrl + '/checkins/chart', {params}).then(data => data.data) as CheckinsChart[];
+
+    const output = await axios.get(settings.apiUrl + '/checkins/chart', {params})
+      .then(data => {
+        console.log(data);
+        return data.data;
+      }) as CheckinsChart;
+
+    this.checkinsOutput = output;
     this.scatterD3();
   }
 
@@ -48,43 +83,33 @@ export class Checkins extends React.Component {
       k = [0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6] as unknown as Int8Array;
     const outData = [];
 
-    for (const {x, y, z} of this.data) {
+    for (const {x, y, z} of this.checkinsOutput.data) {
       // const trace1: Partial<PlotData> = {
       const trace1 = {
-        title: 'asd',
         x,
         y,
         z,
-        i,
-        j,
-        k,
-        // mode: 'markers',
-        fillcolor: 'rgba(217, 217, 217, 0.14)',
-        // marker: {
-        //   size: 12,
-        //   line: {
-        //     color: 'rgba(217, 217, 217, 0.14)',
-        //     width: 0.5
-        //   },
-        //   opacity: 0.8
-        // },
+        i: this.state.type === ChartType.BOXES ? i : undefined,
+        j: this.state.type === ChartType.BOXES ? j : undefined,
+        k: this.state.type === ChartType.BOXES ? k : undefined,
         type: 'mesh3d',
-        // type: 'scatter3d',
         flatshading: true
       };
       outData.push(trace1);
     }
 
     const layout: Partial<Layout> = {
+      selectdirection: 'h',
       scene: {
         xaxis: {
           // visible: false,
           // range: [0, 120]
-          // range: [0, 10]
+          range: this.checkinsOutput.settings.range
         },
         yaxis: {
           // visible: false,
-          // range: [0, 120],
+          range: this.checkinsOutput.settings.range,
+
           // range: [0, 10]
         },
         zaxis: {

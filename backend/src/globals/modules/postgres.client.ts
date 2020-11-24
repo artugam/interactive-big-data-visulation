@@ -1,6 +1,6 @@
-import {Client} from "pg";
+import {Client, Pool, PoolConfig} from "pg";
 
-export default class PostgresClient extends Client{
+export default class PostgresClient extends Pool {
 
   private static instance: PostgresClient;
 
@@ -8,7 +8,7 @@ export default class PostgresClient extends Client{
     super(params);
   }
 
-  static getInstance(params?: any): PostgresClient {
+  static getInstance(params?: PoolConfig, force = false): PostgresClient {
     if(!PostgresClient.instance) {
       if(!params) {
         params = {
@@ -17,6 +17,7 @@ export default class PostgresClient extends Client{
           database: 'admin',
           password: 'admin',
           port: 5432,
+          max: 20
         };
       }
       PostgresClient.instance = new PostgresClient(params);
