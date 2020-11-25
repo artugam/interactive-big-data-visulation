@@ -6,12 +6,29 @@ import {loadSettings} from "../../config";
 import * as Plotly from 'plotly.js/dist/plotly';
 import {Layout, PlotData} from 'plotly.js';
 import {CheckinsChart, CheckinsFilters} from "./types";
+import Settings from "./Settings";
 
 
-
+const globalData = {
+  settings: {
+    spaceLayer: {
+      min: 0,
+      max: 7
+    },
+    timeLayer: {
+      min: 0,
+      max: 9
+    },
+    time: {
+      min: 0,
+      max: 123456
+    }
+  }
+};
 
 const DEFAULT_SPACE_LAYER = 4;
 const DEFAULT_TIME_LAYER = 6;
+const DEFAULT_TIME = [10,60];
 
 export class Checkins extends React.Component {
 
@@ -19,8 +36,9 @@ export class Checkins extends React.Component {
 
   state: CheckinsFilters = {
     spaceLayer: DEFAULT_SPACE_LAYER,
-    timeLayer: DEFAULT_TIME_LAYER
-  }
+    timeLayer: DEFAULT_TIME_LAYER,
+    time: DEFAULT_TIME
+  };
 
 
   async componentDidMount() {
@@ -29,17 +47,19 @@ export class Checkins extends React.Component {
 
   async loadData(params: CheckinsFilters) {
     const settings = await loadSettings();
-    this.data = await axios.get(settings.apiUrl + '/checkins/chart', {params}).then(data => data.data) as CheckinsChart[];
+    // this.data = await axios.get(settings.apiUrl + '/checkins/chart', {params}).then(data => data.data) as CheckinsChart[];
+    this.data = [];
     this.scatterD3();
   }
 
-  onInputValueChange (event: React.ChangeEvent<HTMLInputElement>) {
-    // const {name, value} = event.target;
-    // console.log(name, value);
-    // this.setState({[name]: value});
+  onInputValueChange = (name: string, value: string): void => {
+    this.setState({[name]: value});
     // this.loadData(this.state)
-
   }
+
+  onSliderChange = (name: string, value: number | number[]): void => {
+    this.setState({[name]: value});
+  };
 
   scatterD3 = () => {
     const
@@ -99,18 +119,20 @@ export class Checkins extends React.Component {
       }
     };
     Plotly.newPlot('checkinsChart', outData, layout);
-  }
+  };
+
 
   render() {
     return (
       <>
-        <label htmlFor="spaceLayer">Space Layer</label>
-        <input name="spaceLayer" value={this.state.spaceLayer} onChange={this.onInputValueChange}/>
-        <label htmlFor="spaceLayer">Time Layer</label>
-        <input name="timeLayer" value={this.state.timeLayer} onChange={this.onInputValueChange}/>
+        <div className={"col-md-12 mx-0  p-5 row"}>
 
+          <Settings globalData={globalData} checkinsFilters={this.state} onInputValueChange={this.onInputValueChange} onSliderChange={this.onSliderChange}/>
 
-        <div id={'checkinsChart'}></div>
+          <div className={"col-md-6 offset-1"}>
+            <div id={'checkinsChart'}></div>
+          </div>
+        </div>
       </>
   )};
 }

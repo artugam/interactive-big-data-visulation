@@ -7,5 +7,22 @@ export interface CheckinsChart {
 export interface CheckinsFilters {
   spaceLayer?: number;
   timeLayer?: number;
-  time?: number;
+  time?: number[];
+}
+
+export interface GlobalsData {
+  settings: {
+    spaceLayer: {
+      min: number,
+      max: number
+    },
+    timeLayer: {
+      min: number,
+      max: number
+    },
+    time: {
+      min: number,
+      max: number
+    }
+  }
 }
