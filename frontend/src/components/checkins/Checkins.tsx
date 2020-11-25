@@ -28,7 +28,8 @@ const globalData = {
 
 const DEFAULT_SPACE_LAYER = 4;
 const DEFAULT_TIME_LAYER = 6;
-const DEFAULT_TIME = [10,60];
+const DEFAULT_TIME = [0,123456];
+const DEFAULT_STRUCTURE = 'boxes';
 
 export class Checkins extends React.Component {
 
@@ -37,7 +38,11 @@ export class Checkins extends React.Component {
   state: CheckinsFilters = {
     spaceLayer: DEFAULT_SPACE_LAYER,
     timeLayer: DEFAULT_TIME_LAYER,
-    time: DEFAULT_TIME
+    time: DEFAULT_TIME,
+    axes: true,
+    perspective: false,
+    light: true,
+    structure: DEFAULT_STRUCTURE
   };
 
 
@@ -52,13 +57,17 @@ export class Checkins extends React.Component {
     this.scatterD3();
   }
 
-  onInputValueChange = (name: string, value: string): void => {
+  onInputValueChange = (name: string, value: boolean): void => {
     this.setState({[name]: value});
     // this.loadData(this.state)
-  }
+  };
 
   onSliderChange = (name: string, value: number | number[]): void => {
     this.setState({[name]: value});
+  };
+
+  onRadioValueChange = (id: string, name: string): void => {
+    this.setState({[name]: id});
   };
 
   scatterD3 = () => {
@@ -127,7 +136,13 @@ export class Checkins extends React.Component {
       <>
         <div className={"col-md-12 mx-0  p-5 row"}>
 
-          <Settings globalData={globalData} checkinsFilters={this.state} onInputValueChange={this.onInputValueChange} onSliderChange={this.onSliderChange}/>
+          <Settings
+              globalData={globalData}
+              checkinsFilters={this.state}
+              onInputValueChange={this.onInputValueChange}
+              onSliderChange={this.onSliderChange}
+              onRadioValueChange={this.onRadioValueChange}/>
+
 
           <div className={"col-md-6 offset-1"}>
             <div id={'checkinsChart'}></div>

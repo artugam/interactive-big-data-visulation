@@ -8,6 +8,10 @@ export interface CheckinsFilters {
   spaceLayer?: number;
   timeLayer?: number;
   time?: number[];
+  axes: boolean,
+  perspective: boolean,
+  light: boolean,
+  structure: 'tiles' | 'boxes' | 'mesh'
 }
 
 export interface GlobalsData {

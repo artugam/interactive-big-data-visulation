@@ -41,17 +41,24 @@ interface ISettings {
     globalData: GlobalsData,
     checkinsFilters: CheckinsFilters;
     onSliderChange: (name: string, value: number | number[]) => void,
-    onInputValueChange: (name: string, value: string) => void,
+    onInputValueChange: (name: string, value: boolean) => void,
+    onRadioValueChange: (id: string, name: string) => void
 }
 
 class Settings extends Component<ISettings> {
 
-    onInputValueChange (event: React.ChangeEvent<HTMLInputElement>) {
-        const {name, value} = event.target;
-        this.props.onInputValueChange(name, value);
+    onInputValueChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        const {name} = event.target;
+        this.props.onInputValueChange(name, event.target.checked);
     }
 
-    onSliderChange (event: React.ChangeEvent<{}>, value: number | number[]): void {
+    onRadioValueChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        const {id, name} = event.target;
+        console.log(event.target);
+        this.props.onRadioValueChange(id, name);
+    }
+
+    onSliderChange = (event: React.ChangeEvent<{}>, value: number | number[]): void => {
 
         // @ts-ignore
         const name = event.target.parentElement.getElementsByTagName("input")[0].getAttribute('name');
@@ -65,28 +72,26 @@ class Settings extends Component<ISettings> {
                 <h2>Settings</h2>
                 <form className={"m-4"}>
                     <div className={"row"}>
-                        <div className={"col-md-6"}>
-                            <input type="checkbox" name="spaceLayer"  onChange={this.onInputValueChange}/>
-                            <label htmlFor="spaceLayer">Space Layer</label><br/>
-                            <input type="checkbox" name="aaa"  onChange={this.onInputValueChange}/>
-                            <label htmlFor="aaa">Space Layer</label><br/>
-                            <input type="checkbox" name="bbb"  onChange={this.onInputValueChange}/>
-                            <label htmlFor="bbb">Space Layer</label><br/>
+                        <div className={"col-md-6 text-left"}>
+                            <input type="checkbox" name="axes" onChange={this.onInputValueChange} defaultChecked={this.props.checkinsFilters.axes}/>
+                            <label htmlFor="axes">Axes</label><br/>
+                            <input type="checkbox" name="perspective"  onChange={this.onInputValueChange} defaultChecked={this.props.checkinsFilters.perspective}/>
+                            <label htmlFor="perspective">Perspective</label><br/>
+                            <input type="checkbox" name="light"  onChange={this.onInputValueChange} defaultChecked={this.props.checkinsFilters.light}/>
+                            <label htmlFor="light">Light</label><br/>
                         </div>
-                        <div className={"col-md-6"}>
-                            <input type="radio" name="ccc"  onChange={this.onInputValueChange}/>
-                            <label htmlFor="ccc">Space Layer</label><br/>
-                            <input type="radio" name="ddd"  onChange={this.onInputValueChange}/>
-                            <label htmlFor="ddd">Space Layer</label><br/>
-                            <input type="radio" name="eee"  onChange={this.onInputValueChange}/>
-                            <label htmlFor="eee">Space Layer</label><br/>
+                        <div className={"col-md-6 text-left"}>
+                            <input type="radio" id="tiles" name="structure" onChange={this.onRadioValueChange} checked={this.props.checkinsFilters.structure === "tiles"}/>
+                            <label htmlFor="tiles">Tiles</label><br/>
+                            <input type="radio" id="boxes" name="structure" onChange={this.onRadioValueChange} checked={this.props.checkinsFilters.structure === "boxes"}/>
+                            <label htmlFor="boxes">Boxes</label><br/>
+                            <input type="radio" id="mesh" name="structure" onChange={this.onRadioValueChange} checked={this.props.checkinsFilters.structure === "mesh"}/>
+                            <label htmlFor="mesh">Mesh</label><br/>
                         </div>
                     </div>
                     <div className="mt-3">
 
-                        <Typography id="spaceLayerLabel" gutterBottom>
-                            Space Layer
-                        </Typography>
+                        <Typography id="spaceLayerLabel" gutterBottom> Space Layer </Typography>
                         <Slider
                             name="spaceLayer"
                             min={this.props.globalData.settings.spaceLayer.min}
@@ -103,9 +108,7 @@ class Settings extends Component<ISettings> {
 
                     <div className="mt-3">
 
-                        <Typography id="timeLayerLabel" gutterBottom>
-                            Time Layer
-                        </Typography>
+                        <Typography id="timeLayerLabel" gutterBottom> Time Layer </Typography>
                         <Slider
                             name="timeLayer"
                             min={this.props.globalData.settings.timeLayer.min}
@@ -122,9 +125,7 @@ class Settings extends Component<ISettings> {
 
                     <div className="mt-3">
 
-                        <Typography id="timeLabel" gutterBottom>
-                            Time Layer
-                        </Typography>
+                        <Typography id="timeLabel" gutterBottom> Time </Typography>
                         <Slider
                             name="time"
                             min={this.props.globalData.settings.time.min}
