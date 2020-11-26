@@ -36,4 +36,14 @@ export interface CheckinsFilters {
   timeLayer?: number;
   time?: number;
   type: ChartType;
+  points?: {
+    leftTop: {
+      x: number;
+      y: number;
+    },
+    rightBottom: {
+      x: number;
+      y: number;
+    }
+  }
 }

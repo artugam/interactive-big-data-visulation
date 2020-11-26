@@ -16,7 +16,8 @@ export interface MinMax {
 export interface ChartTrace {
   x: number[],
   y: number[],
-  z: number[]
+  z: number[],
+  type?: string;
 
 }
 
@@ -37,6 +38,16 @@ export interface CheckinsFilters {
   timeLayer?: number;
   time?: number;
   type?: ChartType;
+  points?: {
+    leftTop: {
+      x: number;
+      y: number;
+    },
+    rightBottom: {
+      x: number;
+      y: number;
+    }
+  }
 }
 
 export interface CheckinsChartSettingsDb {

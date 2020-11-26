@@ -1,10 +1,14 @@
-import {CheckinsChartData, ChartTrace, CheckinsRow, MinMax} from "../types";
+import {CheckinsChartData, ChartTrace, CheckinsRow, MinMax, CheckinsFilters} from "../types";
 
 export default class ChartBoxesService {
-  build(data: CheckinsRow[]): CheckinsChartData {
+  build(data: CheckinsRow[], params: CheckinsFilters): CheckinsChartData {
 
+    const {points} = params;
     const map = new Map<string, MinMax>();
-    let rangeMax = 0;
+    // let rangeMax = Number(data[0].tile_x);
+    // let rangeMin = Number(data[0].tile_x);
+    let rangeMax = points ? this.pointsMax(points) : Number(data[0].tile_x);
+    let rangeMin = points ? this.pointsMin(points) : Number(data[0].tile_x);
     for (const {tile_x, tile_y, cnt} of data) {
       const value = Number(cnt);
       const key = tile_x + ";" + tile_y;
@@ -22,17 +26,26 @@ export default class ChartBoxesService {
       if (current.max < value) {
         current.max = value;
       }
-      if(Number(tile_x) > rangeMax) {
-        rangeMax = Number(tile_x);
+      if(points) {
+        if(Number(tile_x) > rangeMax) {
+          rangeMax = Number(tile_x);
+        }
+        if(Number(tile_y) > rangeMax) {
+          rangeMax = Number(tile_y);
+        }
+        if(Number(tile_x) < rangeMin) {
+          rangeMin = Number(tile_x);
+        }
+        if(Number(tile_y) < rangeMin) {
+          rangeMin = Number(tile_y);
+        }
       }
-      if(Number(tile_y) > rangeMax) {
-        rangeMax = Number(tile_y);
-      }
+
     }
 
     const outData: CheckinsChartData = {
       data: [],
-      range: [0, rangeMax]
+      range: [rangeMin, rangeMax]
     };
     for (const key of map.keys()) {
       const [x, y] = key.split(';')
@@ -83,10 +96,40 @@ export default class ChartBoxesService {
       outData.data.push({
         x: parsedx,
         y: parsedy,
-        z: parsedz
+        z: parsedz,
+        type: 'heatmap'
       });
     }
 
     return outData;
+  }
+
+  pointsMax(points: CheckinsFilters['points']): number {
+
+    let out = points?.leftTop.x;
+    if(out && points && out < points?.leftTop.y) {
+      out = points?.leftTop.y;
+    }
+    if(out && points && out < points?.rightBottom.x) {
+      out = points?.rightBottom.x;
+    }
+    if(out && points && out < points?.rightBottom.y) {
+      out = points?.rightBottom.y;
+    }
+    return out as number;
+  }
+
+  pointsMin(points: CheckinsFilters['points']): number {
+    let out = points?.leftTop.x;
+    if(out && points && out > points?.leftTop.y) {
+      out = points?.leftTop.y;
+    }
+    if(out && points && out > points?.rightBottom.x) {
+      out = points?.rightBottom.x;
+    }
+    if(out && points && out > points?.rightBottom.y) {
+      out = points?.rightBottom.y;
+    }
+    return out as number;
   }
 }

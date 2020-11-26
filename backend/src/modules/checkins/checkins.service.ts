@@ -84,7 +84,7 @@ export default class CheckinsService {
         return new ChartTilesService().build(data);
     }
 
-    return new ChartBoxesService().build(data);
+    return new ChartBoxesService().build(data, params);
   }
 
 }
