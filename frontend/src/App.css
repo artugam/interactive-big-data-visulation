@@ -1,3 +1,7 @@
+body {
+  background-image: url("https://easletters.com/assets/templates/deveasletters/zVIbtZp8Dk/bg/05%20(2).jpg");
+}
+
 .App {
   text-align: center;
 }
@@ -14,7 +18,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  /*background-color: #282c34;*/
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -26,6 +30,81 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.opacity {
+  opacity: 0.87;
+  transition: opacity .2s;
+}
+
+.opacity:hover {
+  opacity: 0.92;
+}
+
+.valueBox {
+  color: white;
+  background-color: #404040;
+  height: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+  border-radius: 10px;
+  font-size: 20px;
+}
+
+.sliderRow {
+  margin-bottom: 3%;
+  margin-top: 3%;
+  min-height: 40px;
+  max-height: 70px;
+}
+
+.sliderLabel {
+  font-size: 90%;
+  line-height: 1;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+  appearance: none;
+  width: 85%;
+  height: 5px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.85;
+  transition: opacity .2s;
+  padding: 0px;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  border-radius: 5px;
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #ff0000; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 25px; /* Set a specific slider handle width */
+  border-radius: 5px;
+  height: 25px; /* Slider handle height */
+  background: #ff0000; /* Green background */
+  cursor: pointer; /* Cursor on hover */
 }
 
 @keyframes App-logo-spin {

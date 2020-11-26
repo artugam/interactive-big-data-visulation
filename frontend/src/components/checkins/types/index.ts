@@ -34,16 +34,42 @@ export enum ChartType {
 export interface CheckinsFilters {
   spaceLayer?: number;
   timeLayer?: number;
-  time?: number;
+  time?: number[];
+  axes: boolean,
+  perspective: boolean,
+  light: boolean,
+  structure: 'tiles' | 'boxes' | 'mesh'
   type: ChartType;
-  points?: {
-    leftTop: {
-      x: number;
-      y: number;
+  points?: PointsRange;
+}
+
+export interface GlobalsData {
+  settings: {
+    spaceLayer: {
+      min: number,
+      max: number
     },
-    rightBottom: {
-      x: number;
-      y: number;
+    timeLayer: {
+      min: number,
+      max: number
+    },
+    time: {
+      min: number,
+      max: number
     }
+  }
+  time?: number;
+  type?: ChartType;
+  points?: PointsRange;
+}
+
+export interface PointsRange {
+  leftTop: {
+    x: number;
+    y: number;
+  },
+  rightBottom: {
+    x: number;
+    y: number;
   }
 }

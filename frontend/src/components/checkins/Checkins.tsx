@@ -1,9 +1,10 @@
-import React, {lazy} from "react";
+import React from "react";
 import axios from 'axios';
 import {loadSettings} from "../../config";
 
 // @ts-ignore
 import * as Plotly from 'plotly.js/dist/plotly';
+import Settings from "./Settings";
 import {
   Layout,
   PlotData,
@@ -14,12 +15,29 @@ import {
 import {ChartType, CheckinsChart, CheckinsChartGlobalSettings, CheckinsFilters} from "./types";
 
 
+const globalData = {
+  settings: {
+    spaceLayer: {
+      min: 0,
+      max: 7
+    },
+    timeLayer: {
+      min: 0,
+      max: 9
+    },
+    time: {
+      min: 0,
+      max: 123456
+    }
+  }
+};
 
-const DEFAULT_SPACE_LAYER = 6;
+const DEFAULT_SPACE_LAYER = 4;
 const DEFAULT_TIME_LAYER = 6;
 const DEFAULT_TYPE = ChartType.BOXES;
 // const DEFAULT_TYPE = ChartType.TILES;
-
+const DEFAULT_TIME = [0,123456];
+const DEFAULT_STRUCTURE = 'boxes';
 
 export class Checkins extends React.Component {
 
@@ -35,12 +53,15 @@ export class Checkins extends React.Component {
   };
 
   state: CheckinsFilters = {
-
     spaceLayer: DEFAULT_SPACE_LAYER,
     timeLayer: DEFAULT_TIME_LAYER,
+    time: DEFAULT_TIME,
+    axes: true,
+    perspective: false,
+    light: true,
+    structure: DEFAULT_STRUCTURE,
     type: DEFAULT_TYPE,
-    time: 5
-  }
+  };
 
 
   async componentDidMount() {
@@ -78,13 +99,18 @@ export class Checkins extends React.Component {
     // }
   }
 
-  onInputValueChange (event: React.ChangeEvent<HTMLInputElement>) {
-    // const {name, value} = event.target;
-    // console.log(name, value);
-    // this.setState({[name]: value});
+  onInputValueChange = (name: string, value: boolean): void => {
+    this.setState({[name]: value});
     // this.loadData(this.state)
+  };
 
-  }
+  onSliderChange = (name: string, value: number | number[]): void => {
+    this.setState({[name]: value});
+  };
+
+  onRadioValueChange = (id: string, name: string): void => {
+    this.setState({[name]: id});
+  };
 
   async load3d(params: CheckinsFilters) {
     const settings = await loadSettings();
@@ -120,7 +146,6 @@ export class Checkins extends React.Component {
     }
 
     const layout: Partial<Layout> = {
-      selectdirection: 'h',
       scene: {
         xaxis: {
           // visible: false,
@@ -222,14 +247,21 @@ export class Checkins extends React.Component {
   render() {
     return (
       <>
-        <label htmlFor="spaceLayer">Space Layer</label>
-        <input name="spaceLayer" value={this.state.spaceLayer} onChange={this.onInputValueChange}/>
-        <label htmlFor="spaceLayer">Time Layer</label>
-        <input name="timeLayer" value={this.state.timeLayer} onChange={this.onInputValueChange}/>
+        <div className={"col-md-12 mx-0  p-5 row"}>
+
+          <Settings
+              globalData={globalData}
+              checkinsFilters={this.state}
+              onInputValueChange={this.onInputValueChange}
+              onSliderChange={this.onSliderChange}
+              onRadioValueChange={this.onRadioValueChange}/>
 
 
-        <div id={'checkinsChart'}></div>
-        <div id={'heatMap'}></div>
+          <div className={"col-md-6 offset-1"}>
+            <div id={'checkinsChart'}></div>
+            <div id={'heatMap'}></div>
+          </div>
+        </div>
       </>
   )};
 }
