@@ -1,3 +1,9 @@
+
+export interface MinMax {
+  min: number;
+  max: number;
+}
+
 export interface CheckinsChart {
   data: {
     x: number[],
@@ -5,33 +11,25 @@ export interface CheckinsChart {
     z: number[]
   }[],
   settings: {
-    time: {
-      max: number,
-      min: number
-    },
+    time: MinMax,
     range: number[]
   }
 }
 
-export interface CheckinsChartGlobalSettings {
+export interface CheckinsAvailableSettings {
   settings: {
-    spaceLayer: {
-      max: number,
-      min: number
-    },
-    timeLayer: {
-      max: number,
-      min: number
-    }
+    spaceLayer: MinMax,
+    timeLayer: MinMax
   }
 }
 
 export enum ChartType {
   BOXES = 'boxes',
   TILES = 'tiles',
+  HEATMAP = 'heatmap'
 }
 
-export interface CheckinsFilters {
+export interface CheckinsChartFilters {
   spaceLayer?: number;
   timeLayer?: number;
   time?: number[];
@@ -43,24 +41,16 @@ export interface CheckinsFilters {
   points?: PointsRange;
 }
 
-export interface GlobalsData {
-  settings: {
-    spaceLayer: {
-      min: number,
-      max: number
-    },
-    timeLayer: {
-      min: number,
-      max: number
-    },
-    time: {
-      min: number,
-      max: number
-    }
+export interface AvailableSettings {
+  global: {
+    spaceLayer: MinMax,
+    timeLayer: MinMax,
+    time?: number;
+    type?: ChartType;
+  },
+  chart: {
+    time: MinMax
   }
-  time?: number;
-  type?: ChartType;
-  points?: PointsRange;
 }
 
 export interface PointsRange {
@@ -72,4 +62,10 @@ export interface PointsRange {
     x: number;
     y: number;
   }
+}
+
+
+export interface CheckinsState {
+  usedSettings: CheckinsChartFilters,
+  availableSettings: AvailableSettings
 }

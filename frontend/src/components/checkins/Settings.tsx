@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import Typography from "@material-ui/core/Typography";
 import Slider from "@material-ui/core/Slider";
-import {CheckinsChart, CheckinsFilters, GlobalsData} from "./types";
+import {CheckinsChartFilters, AvailableSettings} from "./types";
+
 
 
 // const marks = {
@@ -38,31 +39,47 @@ import {CheckinsChart, CheckinsFilters, GlobalsData} from "./types";
 // };
 
 interface ISettings {
-    globalData: GlobalsData,
-    checkinsFilters: CheckinsFilters;
-    onSliderChange: (name: string, value: number | number[]) => void,
-    onInputValueChange: (name: string, value: boolean) => void,
-    onRadioValueChange: (id: string, name: string) => void
+    availableSettings: AvailableSettings,
+    checkinsFilters: CheckinsChartFilters;
+    onSettingChange: (name: string, value: number | number[] | boolean | string | object) => void
 }
 
-class Settings extends Component<ISettings> {
+export class Settings extends Component<ISettings> {
 
+    /**
+     *
+     * @param {React.ChangeEvent<HTMLInputElement>} event
+     */
     onInputValueChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        const {name} = event.target;
-        this.props.onInputValueChange(name, event.target.checked);
+        const {name, checked} = event.target;
+        this.props.onSettingChange(name, checked);
     }
 
+    /**
+     *
+     * @param {React.ChangeEvent<HTMLInputElement>} event
+     */
     onRadioValueChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
         const {id, name} = event.target;
-        console.log(event.target);
-        this.props.onRadioValueChange(id, name);
+        this.props.onSettingChange(name, id);
     }
 
+    /**
+     *
+     * @param {React.ChangeEvent<{}>} event
+     * @param {number | number[]} value
+     */
     onSliderChange = (event: React.ChangeEvent<{}>, value: number | number[]): void => {
-
+        // let out: number | number[] | MinMax = value;
+        // if(Array.isArray(value)) {
+        //     out = {
+        //         min: value[0],
+        //         max: value[0]
+        //     }
+        // }
         // @ts-ignore
         const name = event.target.parentElement.getElementsByTagName("input")[0].getAttribute('name');
-        this.props.onSliderChange(name, value);
+        this.props.onSettingChange(name, value);
     };
 
 
@@ -94,8 +111,8 @@ class Settings extends Component<ISettings> {
                         <Typography id="spaceLayerLabel" gutterBottom> Space Layer </Typography>
                         <Slider
                             name="spaceLayer"
-                            min={this.props.globalData.settings.spaceLayer.min}
-                            max={this.props.globalData.settings.spaceLayer.max}
+                            min={this.props.availableSettings.global.spaceLayer.min}
+                            max={this.props.availableSettings.global.spaceLayer.max}
                             key={`slider-${this.props.checkinsFilters.spaceLayer}`}
                             defaultValue={this.props.checkinsFilters.spaceLayer}
                             aria-labelledby="spaceLayerLabel"
@@ -111,8 +128,8 @@ class Settings extends Component<ISettings> {
                         <Typography id="timeLayerLabel" gutterBottom> Time Layer </Typography>
                         <Slider
                             name="timeLayer"
-                            min={this.props.globalData.settings.timeLayer.min}
-                            max={this.props.globalData.settings.timeLayer.max}
+                            min={this.props.availableSettings.global.timeLayer.min}
+                            max={this.props.availableSettings.global.timeLayer.max}
                             key={`slider-${this.props.checkinsFilters.timeLayer}`}
                             defaultValue={this.props.checkinsFilters.timeLayer}
                             aria-labelledby="timeLayerLabel"
@@ -128,9 +145,9 @@ class Settings extends Component<ISettings> {
                         <Typography id="timeLabel" gutterBottom> Time </Typography>
                         <Slider
                             name="time"
-                            min={this.props.globalData.settings.time.min}
-                            max={this.props.globalData.settings.time.max}
-                            key={`slider-${this.props.checkinsFilters.time}`}
+                            min={this.props.availableSettings.chart.time.min}
+                            max={this.props.availableSettings.chart.time.max}
+                            key={`slider-key`}
                             defaultValue={this.props.checkinsFilters.time}
                             aria-labelledby="timeLabel"
                             step={1}

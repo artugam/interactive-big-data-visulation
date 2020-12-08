@@ -11,6 +11,7 @@ import ChartBoxesService from "./chart-services/chart.boxes.service";
 import ChartTilesService from "./chart-services/chart.tiles.service";
 import {response} from "express";
 import {settings} from "cluster";
+import ChartHeatmapService from "./chart-services/chart.heatmap.service";
 
 
 export default class CheckinsService {
@@ -79,9 +80,27 @@ export default class CheckinsService {
   async checkinsData(params: CheckinsFilters): Promise<CheckinsChartData> {
     const data = await this.checkinsRepository.findChartData(params);
 
+    // console.log('asd');
+    // console.log('asd');
+    // console.log('asd');
+    // console.log('asd');
+    // console.log('asd');
+    // console.log('asd');
+    // console.log('asd');
+    // console.log(params.type);
+    // console.log('asd');
+    // console.log('asd');
+    // console.log('asd');
+    // console.log('asd');
+    // console.log('asd');
+    // console.log('asd');
+    // console.log('asd');
+
     switch (params.type) {
       case ChartType.TILES:
         return new ChartTilesService().build(data);
+      case ChartType.HEATMAP:
+        return new ChartHeatmapService().build(data, params);
     }
 
     return new ChartBoxesService().build(data, params);

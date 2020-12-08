@@ -1,7 +1,10 @@
-import {AppSettings} from "./types";
+import {AppSettings, EnvEnum} from "./types";
 
-export async function loadSettings(): Promise<AppSettings> {
+export function loadSettings(): AppSettings {
   return {
-    apiUrl: 'http://localhost:8090'
+    env: EnvEnum.DEV,
+    api: {
+      url: 'http://localhost:8090'
+    }
   }
 }

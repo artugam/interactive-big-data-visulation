@@ -27,7 +27,7 @@ export default class BasePostgresRepository {
       const response = await connection.query(queryTextOrConfig, values);
       await connection.release();
 
-      console.log({query: queryTextOrConfig, values: values ?? null})
+      console.log(JSON.stringify({query: queryTextOrConfig, values}))
       return response;
     } catch (e) {
       console.log('Postgres Error');

@@ -1,4 +1,12 @@
 
+export enum EnvEnum {
+  DEV,
+  PROD
+}
+
 export interface AppSettings {
-  apiUrl: string;
+  env: EnvEnum,
+  api: {
+    url: string
+  }
 }

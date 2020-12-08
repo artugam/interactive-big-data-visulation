@@ -1,12 +1,10 @@
 import BasePostgresRepository from "../../globals/modules/base-postgres.repository";
 import {
   CheckinsChartGlobalSettingsDb,
-  CheckinsChartSettings,
   CheckinsChartSettingsDb,
   CheckinsFilters,
   CheckinsRow
 } from "./types";
-import {response} from "express";
 
 
 const defaultSpaceLayer = 7;
