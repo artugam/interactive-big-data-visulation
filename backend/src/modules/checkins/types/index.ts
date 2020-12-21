@@ -37,7 +37,7 @@ export enum ChartType {
 export interface CheckinsFilters {
   spaceLayer?: number;
   timeLayer?: number;
-  time?: number;
+  time?: number[];
   type?: ChartType;
   points?: {
     leftTop: {

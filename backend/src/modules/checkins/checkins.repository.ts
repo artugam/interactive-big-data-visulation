@@ -57,41 +57,32 @@ export default class CheckinsRepository extends BasePostgresRepository {
     const queryFilters: string[] = [];
     const values: any[] = [];
     const {spaceLayer, time, timeLayer, points} = filters;
-    queryFilters.push("space_layer = $1");
     values.push(spaceLayer || defaultSpaceLayer);
-    queryFilters.push("time_layer = $2");
+    queryFilters.push(`space_layer = $${values.length}`);
+
     values.push(timeLayer || defaultTimeLayer);
+    queryFilters.push(`time_layer = $${values.length}`);
 
-    // if (time) {
-    //   queryFilters.push("time > $3 AND time <= $4");
-    //   values.push(time);
-    //   values.push(time+1);
-    // }
 
-    // const prepare = (value: string) {
-    //   return Number(va)
-    // }
+    if (time) {
+      const [min, max] = time;
+      values.push(min);
+      queryFilters.push(`time > $${values.length}`);
+      values.push(max);
+      queryFilters.push(`time <= $${values.length}`);
+    }
 
     if(points && Object.keys(points).length > 0) {
-    // if(points && Object.keys(points).length > 0 && !time) {
-      queryFilters.push("tile_x >= $3 AND tile_x <= $4"); //
       values.push(Math.floor(Number(points.leftTop.x)));
+      queryFilters.push(`tile_x >= $${values.length}`);
       values.push(Math.round(Number(points.rightBottom.x)));
+      queryFilters.push(`tile_x <= $${values.length}`);
 
-      queryFilters.push("tile_y <= $5 AND tile_y >= $6")
       values.push(Math.round(Number(points.leftTop.y)));
+      queryFilters.push(`tile_y <= $${values.length}`)
       values.push(Math.floor(Number(points.rightBottom.y)));
+      queryFilters.push(`tile_y >= $${values.length}`)
     }
-    // else if (points && Object.keys(points ).length > 1 && time) {
-    //   queryFilters.push("tile_x >= $5 AND tile_x <= $6 AND tile_y <= $7 AND tile_y >= $8");
-    //   values.push(Number(points.leftTop.x));
-    //   values.push(Number(points.rightBottom.x));
-    //   values.push(Number(points.leftTop.y));
-    //   values.push(Number(points.rightBottom.y));
-    // }
-
-    console.log(queryFilters);
-    console.log(values);
 
     return { queryFilters, values};
 

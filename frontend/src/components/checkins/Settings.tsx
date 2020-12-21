@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import Typography from "@material-ui/core/Typography";
 import Slider from "@material-ui/core/Slider";
-import {CheckinsChartFilters, AvailableSettings} from "./types";
-
+import {AvailableSettings, ChartType, CheckinsChartFilters} from "./types";
 
 
 // const marks = {
@@ -85,7 +84,7 @@ export class Settings extends Component<ISettings> {
 
     render() {
         return (
-            <div className={"col-md-5 bg-white p-4 text-dark rounded-lg opacity"}>
+            <div className={"bg-white p-4 text-dark rounded-lg opacity"}>
                 <h2>Settings</h2>
                 <form className={"m-4"}>
                     <div className={"row"}>
@@ -98,16 +97,15 @@ export class Settings extends Component<ISettings> {
                             <label htmlFor="light">Light</label><br/>
                         </div>
                         <div className={"col-md-6 text-left"}>
-                            <input type="radio" id="tiles" name="structure" onChange={this.onRadioValueChange} checked={this.props.checkinsFilters.structure === "tiles"}/>
+                            <input type="radio" id="tiles" name="type" onChange={this.onRadioValueChange} checked={this.props.checkinsFilters.type === ChartType.TILES}/>
                             <label htmlFor="tiles">Tiles</label><br/>
-                            <input type="radio" id="boxes" name="structure" onChange={this.onRadioValueChange} checked={this.props.checkinsFilters.structure === "boxes"}/>
+                            <input type="radio" id="boxes" name="type" onChange={this.onRadioValueChange} checked={this.props.checkinsFilters.type === ChartType.BOXES}/>
                             <label htmlFor="boxes">Boxes</label><br/>
-                            <input type="radio" id="mesh" name="structure" onChange={this.onRadioValueChange} checked={this.props.checkinsFilters.structure === "mesh"}/>
+                            <input type="radio" id="mesh" name="type" onChange={this.onRadioValueChange} checked={this.props.checkinsFilters.type === ChartType.MESH}/>
                             <label htmlFor="mesh">Mesh</label><br/>
                         </div>
                     </div>
                     <div className="mt-3">
-
                         <Typography id="spaceLayerLabel" gutterBottom> Space Layer </Typography>
                         <Slider
                             name="spaceLayer"

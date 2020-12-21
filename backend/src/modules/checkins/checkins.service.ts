@@ -80,22 +80,6 @@ export default class CheckinsService {
   async checkinsData(params: CheckinsFilters): Promise<CheckinsChartData> {
     const data = await this.checkinsRepository.findChartData(params);
 
-    // console.log('asd');
-    // console.log('asd');
-    // console.log('asd');
-    // console.log('asd');
-    // console.log('asd');
-    // console.log('asd');
-    // console.log('asd');
-    // console.log(params.type);
-    // console.log('asd');
-    // console.log('asd');
-    // console.log('asd');
-    // console.log('asd');
-    // console.log('asd');
-    // console.log('asd');
-    // console.log('asd');
-
     switch (params.type) {
       case ChartType.TILES:
         return new ChartTilesService().build(data);

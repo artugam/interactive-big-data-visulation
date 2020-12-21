@@ -20,12 +20,19 @@ class Chart3D extends Component<CheckinsChartProps> {
     await this.reload();
   }
 
-  async reload() {
-    this.setState({visible: true});
-    this.props.service.loadChartData(this.props.filters).then((chartData: CheckinsChart) => {
-      this.load(chartData).then(() => {
+  async componentDidUpdate(prevProps: Readonly<CheckinsChartProps>, prevState: Readonly<{visible: boolean}>, snapshot?: any) {
+    if(this.state.visible == prevState.visible) {
+      await this.reload();
+    }
+  }
 
-        this.setState({visible: false});
+  async reload() {
+    this.setState({visible: true}, () => {
+      Plotly.purge('checkinsChart');
+      this.props.service.loadChartData(this.props.filters).then((chartData: CheckinsChart) => {
+        this.load(chartData).then(() => {
+          this.setState({visible: false});
+        });
       });
     });
   }
@@ -78,12 +85,12 @@ class Chart3D extends Component<CheckinsChartProps> {
         t: 0
       }
     };
-    Plotly.newPlot('checkinsChart', outData, layout);
+    Plotly.plot('checkinsChart', outData, layout);
   }
 
   render() {
     return (
-      <div className={'row'} style={{height: 600, width: 600, backgroundColor: "white", display:"block"}}>
+      <div className={'row'} style={{height: 600, backgroundColor: "white", display:"block"}}>
         <div id={'checkinsChart'}></div>
 
         <Loader

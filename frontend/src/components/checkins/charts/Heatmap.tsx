@@ -120,7 +120,7 @@ class Heatmap extends Component<CheckinsChartProps> {
 
   render() {
     return (
-      <div className={'row'} style={{height: 600, width: 600, backgroundColor: "white", display:"block"}}>
+      <div className={'row'} style={{height: 600, backgroundColor: "white", display:"block"}}>
         <div id={'heatMap'}></div>
         <Loader
           type="Oval"

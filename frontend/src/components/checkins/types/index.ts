@@ -25,6 +25,7 @@ export interface CheckinsAvailableSettings {
 
 export enum ChartType {
   BOXES = 'boxes',
+  MESH = 'mesh',
   TILES = 'tiles',
   HEATMAP = 'heatmap'
 }
@@ -36,7 +37,6 @@ export interface CheckinsChartFilters {
   axes: boolean,
   perspective: boolean,
   light: boolean,
-  structure: 'tiles' | 'boxes' | 'mesh'
   type: ChartType;
   points?: PointsRange;
 }

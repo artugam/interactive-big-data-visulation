@@ -11,7 +11,7 @@ export default class CheckinsController {
     try {
       const params = req.query as CheckinsRequestParams;
       params.points = params.points ? JSON.parse(params.points as unknown as string) : undefined;
-      console.log(params);
+
       const [data, settings] = await this.checkinsService.chartData(params);
 
       return res.status(200).json({
