@@ -111,9 +111,14 @@ class Heatmap extends Component<CheckinsChartProps> {
           }
         }
       }
-      // const options = {...this.state}
-      // options.points = points;
-      console.log(points);
+      const options = {...this.props.filters};
+      options.points = points;
+      // console.log(this.props.chart3d);
+      // this.props.onSettingChange('points', points)
+      if(this.props.chart3d?.current) {
+        this.props.chart3d.current.reload(options);
+      }
+
       // this.load3d(options);
     });
   }

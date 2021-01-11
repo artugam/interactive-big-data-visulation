@@ -1,4 +1,4 @@
-import React from "react";
+import React, {RefObject} from "react";
 import Settings from "./Settings";
 import {
   AvailableSettings,
@@ -15,6 +15,7 @@ const DEFAULT_TYPE = ChartType.BOXES;
 const DEFAULT_TIME = [0, 123456];
 
 export class Checkins extends React.Component {
+
 
   service: CheckinsService = createCheckinsServiceInstance();
 
@@ -46,7 +47,8 @@ export class Checkins extends React.Component {
           max: 123
         }
       }
-    }
+    },
+    chart3d: React.createRef<Chart3D>()
   };
 
   async componentWillMount() {
@@ -83,10 +85,11 @@ export class Checkins extends React.Component {
                 availableSettings={this.state.availableSettings}
                 checkinsFilters={this.state.usedSettings}
                 onSettingChange={this.onUsedSettingChange}
+
               />
             </div>
             <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-              <Heatmap filters={this.state.usedSettings} service={this.service}/>
+              <Heatmap filters={this.state.usedSettings} onSettingChange={this.onUsedSettingChange} service={this.service} chart3d={this.state.chart3d}/>
             </div>
           </div>
         </div>
@@ -128,7 +131,7 @@ export class Checkins extends React.Component {
         {/*<Chart3D />*/}
         {/*<Heatmap />*/}
         {/*<div id={'heatMap'}></div>*/}
-        <Chart3D filters={this.state.usedSettings} service={this.service}/>
+        <Chart3D ref={this.state.chart3d} filters={this.state.usedSettings} service={this.service} onSettingChange={this.onUsedSettingChange}/>
         {/*<Heatmap filters={this.state.usedSettings} service={this.service} />*/}
       </div>
       </div>

@@ -1,3 +1,5 @@
+import {RefObject} from "react";
+import Chart3D from "../charts/Chart3D";
 
 export interface MinMax {
   min: number;
@@ -67,5 +69,6 @@ export interface PointsRange {
 
 export interface CheckinsState {
   usedSettings: CheckinsChartFilters,
-  availableSettings: AvailableSettings
+  availableSettings: AvailableSettings,
+  chart3d?: RefObject<Chart3D>
 }

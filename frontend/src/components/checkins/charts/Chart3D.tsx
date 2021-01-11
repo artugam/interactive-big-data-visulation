@@ -26,10 +26,10 @@ class Chart3D extends Component<CheckinsChartProps> {
     }
   }
 
-  async reload() {
+  async reload(filters?: CheckinsChartFilters) {
     this.setState({visible: true}, () => {
       Plotly.purge('checkinsChart');
-      this.props.service.loadChartData(this.props.filters).then((chartData: CheckinsChart) => {
+      this.props.service.loadChartData(filters || this.props.filters).then((chartData: CheckinsChart) => {
         this.load(chartData).then(() => {
           this.setState({visible: false});
         });
@@ -59,23 +59,31 @@ class Chart3D extends Component<CheckinsChartProps> {
     }
     console.log(outData);
 
+    const axesVisibility = true;
     const layout: Partial<Layout> = {
       scene: {
         xaxis: {
-          // visible: false,
+          visible: axesVisibility,
           // range: [0, 120]
           // range: this.checkinsOutput.settings.range
           range: chart.settings.range
         },
         yaxis: {
-          // visible: false,
+          visible: axesVisibility,
           // range: this.checkinsOutput.settings.range,
           range: chart.settings.range,
 
           // range: [0, 10]
         },
         zaxis: {
-          // visible: false
+          visible: axesVisibility
+        },
+        camera: {
+          eye: {
+            x: 1.25,
+            y: 1.25,
+            z: 1.25
+          }
         }
       },
       margin: {
