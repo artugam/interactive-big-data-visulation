@@ -8,7 +8,7 @@ export default class PostgresClient extends Pool {
     super(params);
   }
 
-  static getInstance(params?: PoolConfig, force = false): PostgresClient {
+  static getInstance(params?: PoolConfig): PostgresClient {
     if(!PostgresClient.instance) {
       if(!params) {
         params = {

@@ -1,12 +1,10 @@
 import BasePostgresRepository from "../../globals/modules/base-postgres.repository";
 import {
   CheckinsChartGlobalSettingsDb,
-  CheckinsChartSettings,
   CheckinsChartSettingsDb,
   CheckinsFilters,
   CheckinsRow
 } from "./types";
-import {response} from "express";
 
 
 const defaultSpaceLayer = 7;
@@ -58,16 +56,32 @@ export default class CheckinsRepository extends BasePostgresRepository {
   protected prepareCheckinsChartFilters(filters: CheckinsFilters): CheckinsQueryFilters {
     const queryFilters: string[] = [];
     const values: any[] = [];
-    const {spaceLayer, time, timeLayer} = filters;
-    queryFilters.push("space_layer = $1");
+    const {spaceLayer, time, timeLayer, points} = filters;
     values.push(spaceLayer || defaultSpaceLayer);
-    queryFilters.push("time_layer = $2");
+    queryFilters.push(`space_layer = $${values.length}`);
+
     values.push(timeLayer || defaultTimeLayer);
+    queryFilters.push(`time_layer = $${values.length}`);
+
 
     if (time) {
-      queryFilters.push("time > $3 AND time <= $4");
-      values.push(time);
-      values.push(time+1);
+      const [min, max] = time;
+      values.push(min);
+      queryFilters.push(`time > $${values.length}`);
+      values.push(max);
+      queryFilters.push(`time <= $${values.length}`);
+    }
+
+    if(points && Object.keys(points).length > 0) {
+      values.push(Math.floor(Number(points.leftTop.x)));
+      queryFilters.push(`tile_x >= $${values.length}`);
+      values.push(Math.round(Number(points.rightBottom.x)));
+      queryFilters.push(`tile_x <= $${values.length}`);
+
+      values.push(Math.round(Number(points.leftTop.y)));
+      queryFilters.push(`tile_y <= $${values.length}`)
+      values.push(Math.floor(Number(points.rightBottom.y)));
+      queryFilters.push(`tile_y >= $${values.length}`)
     }
 
     return { queryFilters, values};

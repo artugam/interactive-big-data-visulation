@@ -1,6 +1,6 @@
-import {CheckinsChartData, ChartTrace, CheckinsRow, MinMax, CheckinsFilters} from "../types";
+import {CheckinsChartData, CheckinsFilters, CheckinsRow, MinMax} from "../types";
 
-export default class ChartBoxesService {
+export default class ChartHeatmapService {
   build(data: CheckinsRow[], params: CheckinsFilters): CheckinsChartData {
 
     const {points} = params;
@@ -26,7 +26,7 @@ export default class ChartBoxesService {
       if (current.max < value) {
         current.max = value;
       }
-      // if(points) {
+      if(points) {
         if(Number(tile_x) > rangeMax) {
           rangeMax = Number(tile_x);
         }
@@ -39,7 +39,7 @@ export default class ChartBoxesService {
         if(Number(tile_y) < rangeMin) {
           rangeMin = Number(tile_y);
         }
-      // }
+      }
 
     }
 
@@ -96,18 +96,18 @@ export default class ChartBoxesService {
       const parsedz = points.map(item => item.z);
 
 
-      outData.data.push({
-        x: parsedx,
-        y: parsedy,
-        z: parsedz,
-        // type: 'heatmap'
-      });
       // outData.data.push({
-      //   x: [Number(x)],
-      //   y: [Number(y)],
-      //   z: [max],
+      //   x: parsedx,
+      //   y: parsedy,
+      //   z: parsedz,
       //   type: 'heatmap'
       // });
+      outData.data.push({
+        x: [Number(x)],
+        y: [Number(y)],
+        z: [max],
+        type: 'heatmap'
+      });
       // outX.push(Number(x));
       // outY.push(Number(y));
       // outZ.push(Number(max));
