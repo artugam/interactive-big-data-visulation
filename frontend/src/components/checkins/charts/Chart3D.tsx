@@ -51,7 +51,38 @@ class Chart3D extends Component<CheckinsChartProps> {
     if(!chart) {
       return;
     }
+//     const a=[], b=[], c=[];
+//     for(let i=0;i<50; i++)
+//     {
+//       var a_ = Math.random();
+//       a.push(a_);
+//
+//       var b_ = Math.random();
+//       b.push(b_);
+//
+//       var c_ = Math.random();
+//       c.push(c_);
+//     }
+// // Plotting the mesh
+//     var outData = [
+//       {
+//         opacity:0.8,
+//         color:'rgb(300,100,200)',
+//         type: 'mesh3d',
+//         x: a,
+//         y: b,
+//         z: c,
+//       }
+//     ];
+    // Plotly.newPlot('myDiv', data);
 
+    const intensity = [0, 50, 500, 2000, 5000];
+    const colorscale = [
+      [0, 'rgb(255, 0, 255)'],
+      [500, 'rgb(0, 255, 0)'],
+      [5000, 'rgb(0, 0, 255)']
+    ];
+    // const colorscale = 'YlOrRd';
     const
       i = [7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2] as unknown as Int8Array,
       j = [3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3] as unknown as Int8Array,
@@ -66,8 +97,17 @@ class Chart3D extends Component<CheckinsChartProps> {
         j: this.props.filters.type === ChartType.BOXES ? j : undefined,
         k: this.props.filters.type === ChartType.BOXES ? k : undefined,
         type: 'mesh3d',
-        flatshading: true
+        flatshading: this.props.filters.type !== ChartType.MESH,
+        // intensity: this.props.filters.type === ChartType.MESH ? intensity : undefined
       };
+      if(this.props.filters.type === ChartType.MESH) {
+        // @ts-ignore
+        // trace1['colorscale'] = 'Viridis';
+        // @ts-ignore
+        trace1['intensity'] = z;
+        // // @ts-ignore
+        // trace1['opacity'] = 0.6;
+      }
       outData.push(trace1);
     }
 
@@ -79,17 +119,20 @@ class Chart3D extends Component<CheckinsChartProps> {
           visible: axesVisibility,
           // range: [0, 120]
           // range: this.checkinsOutput.settings.range
-          range: chart.settings.range
+          range: this.props.filters.type !== ChartType.MESH ? chart.settings.range : undefined
         },
         yaxis: {
           visible: axesVisibility,
           // range: this.checkinsOutput.settings.range,
-          range: chart.settings.range,
+          range: this.props.filters.type !== ChartType.MESH ? chart.settings.range : undefined,
 
           // range: [0, 10]
         },
         zaxis: {
-          visible: axesVisibility
+          visible: axesVisibility,
+          linecolor: outData[0].z,
+
+
         },
         camera: {
           eye: {

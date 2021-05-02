@@ -125,15 +125,23 @@ export class Settings extends Component<ISettings> {
             {/*  <label htmlFor="light">Light</label><br/>*/}
             {/*</div>*/}
             <div className={"col-md-12 text-left"}>
-              <input type="radio" id="tiles" name="type" onChange={this.onRadioValueChange}
-                     checked={this.props.checkinsFilters.type === ChartType.TILES}/>
-              <label htmlFor="tiles">Tiles</label><br/>
-              <input type="radio" id="boxes" name="type" onChange={this.onRadioValueChange}
-                     checked={this.props.checkinsFilters.type === ChartType.BOXES}/>
-              <label htmlFor="boxes">Boxes</label><br/>
-              <input type="radio" id="mesh" name="type" onChange={this.onRadioValueChange}
-                     checked={this.props.checkinsFilters.type === ChartType.MESH}/>
-              <label htmlFor="mesh">Mesh</label><br/>
+              <div className={"row"}>
+                <div className={"col-md-3"}>
+                  <input type="radio" id="tiles" name="type" onChange={this.onRadioValueChange}
+                         checked={this.props.checkinsFilters.type === ChartType.TILES}/>
+                  <label htmlFor="tiles">&nbsp;Tiles</label><br/>
+                </div>
+                <div className={"col-md-3"}>
+                  <input type="radio" id="boxes" name="type" onChange={this.onRadioValueChange}
+                         checked={this.props.checkinsFilters.type === ChartType.BOXES}/>
+                  <label htmlFor="boxes">&nbsp;Boxes</label><br/>
+                </div>
+                <div className={"col-md-3"}>
+                  <input type="radio" id="mesh" name="type" onChange={this.onRadioValueChange}
+                         checked={this.props.checkinsFilters.type === ChartType.MESH}/>
+                  <label htmlFor="mesh">&nbsp;Mesh</label><br/>
+                </div>
+              </div>
             </div>
           </div>
           <div className="mt-3">

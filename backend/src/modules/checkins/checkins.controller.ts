@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import CheckinsService from "./checkins.service";
-import {ChartDataResponse, ChartTrace, CheckinsChartSettings, CheckinsRequestParams} from "./types";
+import {CheckinsRequestParams} from "./types";
 
 export default class CheckinsController {
 

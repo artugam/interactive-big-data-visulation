@@ -31,6 +31,7 @@ export interface CheckinsRequestParams extends CheckinsFilters {}
 export enum ChartType {
   BOXES = 'boxes',
   TILES = 'tiles',
+  MESH = 'mesh',
   HEATMAP = 'heatmap',
 }
 

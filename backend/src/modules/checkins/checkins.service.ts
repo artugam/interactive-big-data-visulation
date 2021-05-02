@@ -12,6 +12,7 @@ import ChartTilesService from "./chart-services/chart.tiles.service";
 import {response} from "express";
 import {settings} from "cluster";
 import ChartHeatmapService from "./chart-services/chart.heatmap.service";
+import ChartMeshService from "./chart-services/chart.mesh.service";
 
 
 export default class CheckinsService {
@@ -85,6 +86,8 @@ export default class CheckinsService {
         return new ChartTilesService().build(data);
       case ChartType.HEATMAP:
         return new ChartHeatmapService().build(data, params);
+      case ChartType.MESH:
+        return new ChartMeshService().build(data, params);
     }
 
     return new ChartBoxesService().build(data, params);
