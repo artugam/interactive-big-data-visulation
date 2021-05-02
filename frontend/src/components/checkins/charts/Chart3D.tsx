@@ -11,17 +11,19 @@ import Loader from 'react-loader-spinner'
 
 class Chart3D extends Component<CheckinsChartProps> {
 
-  state = {
-    visible: false
-  }
-
-
   async componentDidMount() {
     await this.reload();
   }
 
+  shouldComponentUpdate(nextProps: Readonly<CheckinsChartProps>, nextState: Readonly<{}>, nextContext: any): boolean {
+    return this.props.visible != nextProps.visible || this.props.chart != nextProps.chart;
+  }
+
   async componentDidUpdate(prevProps: Readonly<CheckinsChartProps>, prevState: Readonly<{visible: boolean}>, snapshot?: any) {
-    if(this.state.visible == prevState.visible) {
+    if(this.props.visible != prevProps.visible) {
+      Plotly.purge('checkinsChart');
+    }
+    if(this.props.chart != prevProps.chart) {
       await this.reload();
     }
   }
@@ -29,16 +31,27 @@ class Chart3D extends Component<CheckinsChartProps> {
   async reload(filters?: CheckinsChartFilters) {
     this.setState({visible: true}, () => {
       Plotly.purge('checkinsChart');
-      this.props.service.loadChartData(filters || this.props.filters).then((chartData: CheckinsChart) => {
-        this.load(chartData).then(() => {
-          this.setState({visible: false});
-        });
+      this.load(this.props.chart).then(() => {
+        this.setState({visible: false});
       });
     });
+
+    // this.setState({visible: true}, () => {
+    //   Plotly.purge('checkinsChart');
+    //   this.props.service.loadChartData(filters || this.props.filters).then((chartData: CheckinsChart) => {
+    //     this.load(chartData).then(() => {
+    //       this.setState({visible: false});
+    //     });
+    //   });
+    // });
   }
 
 
-  async load(chart: CheckinsChart) {
+  async load(chart?: CheckinsChart) {
+    if(!chart) {
+      return;
+    }
+
     const
       i = [7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2] as unknown as Int8Array,
       j = [3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3] as unknown as Int8Array,
@@ -57,10 +70,10 @@ class Chart3D extends Component<CheckinsChartProps> {
       };
       outData.push(trace1);
     }
-    console.log(outData);
 
-    const axesVisibility = true;
+    const axesVisibility = false;
     const layout: Partial<Layout> = {
+      height: 600,
       scene: {
         xaxis: {
           visible: axesVisibility,
@@ -98,16 +111,16 @@ class Chart3D extends Component<CheckinsChartProps> {
 
   render() {
     return (
-      <div className={'row'} style={{height: 600, backgroundColor: "white", display:"block"}}>
+      <div className={'row'} style={{height: 615, backgroundColor: "white", display:"block", marginTop: 65, paddingLeft: '5%'}}>
         <div id={'checkinsChart'}></div>
 
         <Loader
-          type="Oval"
-          visible={this.state.visible}
+          type="MutatingDots"
+          visible={this.props.visible}
           color="#00BFFF"
           height={100}
           width={100}
-          style={{paddingTop: '40%'}}
+          style={{paddingTop: '20%'}}
         />
       </div>
     );

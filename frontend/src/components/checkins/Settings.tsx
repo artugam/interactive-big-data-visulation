@@ -43,7 +43,13 @@ interface ISettings {
   availableSettings: AvailableSettings,
   checkinsFilters: CheckinsChartFilters;
   onSettingChange: (name: string, value: number | number[] | boolean | string | object) => void;
+  onClickSave: () => void;
 }
+type DefaultValues = {
+  time?: number[],
+  timeLayer?: number,
+  spaceLayer?: number,
+};
 
 export class Settings extends Component<ISettings> {
 
@@ -67,19 +73,10 @@ export class Settings extends Component<ISettings> {
 
   /**
    *
-   * @param {React.ChangeEvent<{}>} event
-   * @param {number | number[]} value
+   * @param name
    */
-  onSliderChange = (event: React.ChangeEvent<{}>, value: number | number[]): void => {
-    // let out: number | number[] | MinMax = value;
-    // if(Array.isArray(value)) {
-    //     out = {
-    //         min: value[0],
-    //         max: value[0]
-    //     }
-    // }
-    // @ts-ignore
-    const name = event.target.parentElement.getElementsByTagName("input")[0].getAttribute('name');
+
+  onSliderChange = (name: string) => (e: any, value: number | number[]) => {
     this.props.onSettingChange(name, value);
   };
 
@@ -92,24 +89,42 @@ export class Settings extends Component<ISettings> {
     });
   }
 
+  defaultValues?: DefaultValues = undefined;
+  getDefaultValues = (): DefaultValues => {
+    if(!this.defaultValues) {
+      // @ts-ignore
+      const [first, last] = this.props.checkinsFilters.time;
+      this.defaultValues = {
+        time: [first, last],
+        timeLayer: this.props.checkinsFilters.timeLayer,
+        spaceLayer: this.props.checkinsFilters.spaceLayer,
+      }
+      console.log(first);
+      console.log(last);
+      console.log(this.defaultValues.time);
+    }
+    return this.defaultValues;
+  }
+
   render() {
+    this.getDefaultValues();
     return (
       <div className={"bg-white p-4 text-dark rounded-lg opacity"}>
         <h2>Settings</h2>
         <form className={"m-4"}>
           <div className={"row"}>
-            <div className={"col-md-6 text-left"}>
-              <input type="checkbox" name="axes" onChange={this.onInputValueChange}
-                     defaultChecked={this.props.checkinsFilters.axes}/>
-              <label htmlFor="axes">Axes</label><br/>
-              <input type="checkbox" name="perspective" onChange={this.onInputValueChange}
-                     defaultChecked={this.props.checkinsFilters.perspective}/>
-              <label htmlFor="perspective">Perspective</label><br/>
-              <input type="checkbox" name="light" onChange={this.onInputValueChange}
-                     defaultChecked={this.props.checkinsFilters.light}/>
-              <label htmlFor="light">Light</label><br/>
-            </div>
-            <div className={"col-md-6 text-left"}>
+            {/*<div className={"col-md-6 text-left"}>*/}
+            {/*  <input type="checkbox" name="axes" onChange={this.onInputValueChange}*/}
+            {/*         defaultChecked={this.props.checkinsFilters.axes}/>*/}
+            {/*  <label htmlFor="axes">Axes</label><br/>*/}
+            {/*  <input type="checkbox" name="perspective" onChange={this.onInputValueChange}*/}
+            {/*         defaultChecked={this.props.checkinsFilters.perspective}/>*/}
+            {/*  <label htmlFor="perspective">Perspective</label><br/>*/}
+            {/*  <input type="checkbox" name="light" onChange={this.onInputValueChange}*/}
+            {/*         defaultChecked={this.props.checkinsFilters.light}/>*/}
+            {/*  <label htmlFor="light">Light</label><br/>*/}
+            {/*</div>*/}
+            <div className={"col-md-12 text-left"}>
               <input type="radio" id="tiles" name="type" onChange={this.onRadioValueChange}
                      checked={this.props.checkinsFilters.type === ChartType.TILES}/>
               <label htmlFor="tiles">Tiles</label><br/>
@@ -124,16 +139,16 @@ export class Settings extends Component<ISettings> {
           <div className="mt-3">
             <Typography id="spaceLayerLabel" gutterBottom> Space Layer </Typography>
             <Slider
+              key={`slider-spaceLayer`}
               name="spaceLayer"
               min={this.props.availableSettings.global.spaceLayer.min}
               max={this.props.availableSettings.global.spaceLayer.max}
-              key={`slider-${this.props.checkinsFilters.spaceLayer}`}
-              defaultValue={this.props.checkinsFilters.spaceLayer}
+              defaultValue={this.defaultValues?.spaceLayer}
               aria-labelledby="spaceLayerLabel"
               step={1}
               marks={this.generateSliderLabels(this.props.availableSettings.global.spaceLayer)}
               valueLabelDisplay="auto"
-              onChangeCommitted={this.onSliderChange.bind(this)}
+              onChangeCommitted={this.onSliderChange('spaceLayer')}
             />
           </div>
 
@@ -144,25 +159,24 @@ export class Settings extends Component<ISettings> {
               name="timeLayer"
               min={this.props.availableSettings.global.timeLayer.min}
               max={this.props.availableSettings.global.timeLayer.max}
-              key={`slider-${this.props.checkinsFilters.timeLayer}`}
-              defaultValue={this.props.checkinsFilters.timeLayer}
+              key={`slider-timeLayer`}
+              defaultValue={this.defaultValues?.timeLayer}
               aria-labelledby="timeLayerLabel"
               step={1}
               marks={this.generateSliderLabels(this.props.availableSettings.global.timeLayer)}
               valueLabelDisplay="auto"
-              onChangeCommitted={this.onSliderChange.bind(this)}
+              onChangeCommitted={this.onSliderChange('timeLayer')}
             />
           </div>
 
           <div className="mt-3">
-
             <Typography id="timeLabel" gutterBottom> Time </Typography>
             <Slider
               name="time"
               min={this.props.availableSettings.chart.time.min}
               max={this.props.availableSettings.chart.time.max}
-              key={`slider-key`}
-              defaultValue={this.props.checkinsFilters.time}
+              key={`slider-time`}
+              defaultValue={this.defaultValues?.time}
               aria-labelledby="timeLabel"
               step={1}
               marks={[
@@ -176,10 +190,11 @@ export class Settings extends Component<ISettings> {
                 },
               ]}
               valueLabelDisplay="auto"
-              onChangeCommitted={this.onSliderChange.bind(this)}
+              onChangeCommitted={this.onSliderChange('time')}
             />
           </div>
         </form>
+        <button type="button" className="btn btn-primary" onClick={this.props.onClickSave}>Update</button>
       </div>
     );
   }

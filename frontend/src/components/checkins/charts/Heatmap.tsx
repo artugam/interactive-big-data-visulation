@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ChartType, CheckinsChart} from "../types";
+import {ChartType, CheckinsChart, PointsRange} from "../types";
 // @ts-ignore
 import * as Plotly from 'plotly.js/dist/plotly';
 import {Layout, PlotData, PlotRelayoutEvent} from 'plotly.js';
@@ -50,7 +50,7 @@ class Heatmap extends Component<CheckinsChartProps> {
   async reloadChart ()  {
     this.setState({visible: true}, () => {
       Plotly.purge('heatMap');
-      this.props.service.loadChartData({
+      this.props.service?.loadChartData({
         ...this.props.filters,
         type: ChartType.HEATMAP
       }).then((chartData: CheckinsChart) => {
@@ -72,33 +72,43 @@ class Heatmap extends Component<CheckinsChartProps> {
         z,
         type: 'heatmap',
         showscale: false,
+        showlegend: false,
+        "marker.showscale": false,
         colorscale: [[0, 'rgb(0,0,255)']]
       };
       outHeatMap.push(trace1);
     }
 
+
     const heatMapLayout: Partial<Layout> = {
       showlegend: false,
-      scene: {
+      // width: 700,
+
+      autosize: true,
+      // scene: {
         xaxis: {
-          visible: false
+          // range: [0, 1.6],
+
+          showgrid: false,
+          zeroline: false,
+          showticklabels: false,
+          linecolor: 'white',
+          ticks: ''
         },
         yaxis: {
-          visible: false
-        },
-        zaxis: {
-          // visible: false
+          showgrid: false,
+          zeroline: false,
+          showticklabels: false,
+          linecolor: '#ffffff',
+          ticks: ''
         }
-      }
+      // }
     };
 
     const plot = await Plotly.plot('heatMap', outHeatMap, heatMapLayout);
 
     plot.on('plotly_relayout', (event: PlotRelayoutEvent) => {
-      console.log('plotly_relayout');
-      console.log(event);
-
-      let points = undefined;
+      let points: PointsRange | undefined = undefined;
       if(event['xaxis.range[0]'] && event['yaxis.range[1]'] && event['xaxis.range[1]'] && event['yaxis.range[0]']) {
         points = {
           leftTop: {
@@ -111,33 +121,33 @@ class Heatmap extends Component<CheckinsChartProps> {
           }
         }
       }
-      const options = {...this.props.filters};
-      options.points = points;
-      // console.log(this.props.chart3d);
-      // this.props.onSettingChange('points', points)
-      if(this.props.chart3d?.current) {
-        this.props.chart3d.current.reload(options);
+      if(this.props.onSettingChange) {
+        this.props.onSettingChange('points', points, this.props.onClickSave);
       }
 
-      // this.load3d(options);
     });
   }
 
   render() {
     return (
-      <div className={'row'} style={{height: 600, backgroundColor: "white", display:"block"}}>
-        <div id={'heatMap'}></div>
-        <Loader
-          type="Oval"
-          visible={this.state.visible}
-          color="#00BFFF"
-          height={100}
-          width={100}
-          style={{paddingTop: '40%'}}
-        />
+      <div className={"bg-white p-4 text-dark rounded-lg opacity"} style={{height: 600, backgroundColor: "white", display:"block"}}>
+        <div className={"row"} style={{display: "inline-flex"}}>
+          {/*<div className={'col-md-4'}></div>*/}
+          <div id={'heatMap'}></div>
+          {/*<div id={'heatMap'} className={'col-xs-12 col-md-6 offset-md-3 col-lg-4 offset-lg-4'}></div>*/}
+          <Loader
+            type="Oval"
+            visible={this.state.visible}
+            color="#00BFFF"
+            height={100}
+            width={100}
+            style={{paddingTop: '40%'}}
+          />
+        </div>
       </div>
     );
   }
 }
+
 
 export default Heatmap;

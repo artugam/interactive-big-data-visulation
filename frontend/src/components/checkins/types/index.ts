@@ -68,7 +68,11 @@ export interface PointsRange {
 
 
 export interface CheckinsState {
+  lastSettings: CheckinsChartFilters,
   usedSettings: CheckinsChartFilters,
   availableSettings: AvailableSettings,
-  chart3d?: RefObject<Chart3D>
+  chart3d?: RefObject<Chart3D>,
+  chartData?: CheckinsChart,
+  chart3dVisibility: boolean;
+  heatmapVisibility: boolean;
 }
