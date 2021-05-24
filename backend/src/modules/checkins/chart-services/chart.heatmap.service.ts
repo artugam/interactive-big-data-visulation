@@ -9,7 +9,8 @@ export default class ChartHeatmapService {
     // let rangeMin = Number(data[0].tile_x);
     let rangeMax = points ? this.pointsMax(points) : Number(data[0].tile_x);
     let rangeMin = points ? this.pointsMin(points) : Number(data[0].tile_x);
-    for (const {tile_x, tile_y, cnt} of data) {
+    for (const item of data) {
+      const {tile_x, tile_y, cnt} = item;
       const value = Number(cnt);
       const key = tile_x + ";" + tile_y;
       const current = map.get(key);
